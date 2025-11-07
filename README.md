@@ -1,9 +1,9 @@
 🧮 Quine-McCluskey Logic Minimizer
 Milestone 3 – Semi-Functional Implementation
 
-👥 Authors:
-- [Your Name]
-- [Partner Name(s)]
+👥 By:
+- Omar Abdel Motalb
+- Seif
 Date: November 2025
 
 ------------------------------------------------------------
