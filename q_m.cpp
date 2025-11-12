@@ -4,7 +4,7 @@ string varName(int idx) {
     if (idx < 26) return string(1, 'A' + idx);
     return "V" + to_string(idx);
 }
-
+//Seif
 bool combine(const Implicant &a, const Implicant &b, Implicant &result) {
     int diff = 0;
     string newBits = a.bits;
@@ -29,7 +29,7 @@ bool combine(const Implicant &a, const Implicant &b, Implicant &result) {
     }
     return false;
 }
-
+//Seif
 bool existsBits(const vector<Implicant>& list, const string &bits) {
     for (const auto &x : list)
         if (x.bits == bits) return true;
@@ -108,7 +108,7 @@ int literalCount(const Implicant &p) {
     return c;
 }
 
-// main logic moved here
+// ALI
 int qm_minimize(const string &filename) {
     string file = filename.empty() ? "Test6.txt" : filename;
     ifstream fin(file);
@@ -175,7 +175,7 @@ int qm_minimize(const string &filename) {
         }
 
     if (terms_raw.empty()) { cerr << "No terms provided.\n"; return 1; }
-
+//SEIF
     vector<int> minterm_list;
     if (isMaxterm) {
         vector<char> isExcluded(Nmax, 0);
@@ -236,7 +236,7 @@ int qm_minimize(const string &filename) {
     if (minterms.empty()) {
         cout << "No minterms to cover.\n"; return 0;
     }
-
+//SEIF STOP
     int R = (int)primes.size();
     int C = (int)minterms.size();
     vector<vector<int>> table(R, vector<int>(C, 0));
@@ -418,3 +418,4 @@ int qm_minimize(const string &filename) {
 
     return 0;
 }
+
