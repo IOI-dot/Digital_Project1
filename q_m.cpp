@@ -1,10 +1,9 @@
 #include "q_m.h"
-
 string varName(int idx) {
     if (idx < 26) return string(1, 'A' + idx);
     return "V" + to_string(idx);
 }
-//Seif
+
 bool combine(const Implicant &a, const Implicant &b, Implicant &result) {
     int diff = 0;
     string newBits = a.bits;
@@ -29,7 +28,7 @@ bool combine(const Implicant &a, const Implicant &b, Implicant &result) {
     }
     return false;
 }
-//Seif
+
 bool existsBits(const vector<Implicant>& list, const string &bits) {
     for (const auto &x : list)
         if (x.bits == bits) return true;
@@ -108,7 +107,7 @@ int literalCount(const Implicant &p) {
     return c;
 }
 
-// ALI
+// main logic moved here
 int qm_minimize(const string &filename) {
     string file = filename.empty() ? "Test6.txt" : filename;
     ifstream fin(file);
@@ -129,7 +128,7 @@ int qm_minimize(const string &filename) {
     } catch (...) {
         cerr << "Invalid number of variables.\n"; return 1;
     }
-    if (vars <= 0 || vars > 20) { cerr << "Number of variables must be 1..20.\n"; return 1; }
+    if (vars <= 0) { cerr << "Number of variables must be positive.\n"; return 1; }
 
     if (!getline(fin, line)) { cerr << "Missing minterm/maxterm line\n"; return 1; }
     {
@@ -175,7 +174,7 @@ int qm_minimize(const string &filename) {
         }
 
     if (terms_raw.empty()) { cerr << "No terms provided.\n"; return 1; }
-//SEIF
+
     vector<int> minterm_list;
     if (isMaxterm) {
         vector<char> isExcluded(Nmax, 0);
@@ -199,7 +198,7 @@ int qm_minimize(const string &filename) {
         imp.used = false;
         current.push_back(imp);
     }
-
+    //Combination Step (Prime Implicant Extraction
     vector<Implicant> primes;
     bool again = true;
     while (again) {
@@ -220,7 +219,7 @@ int qm_minimize(const string &filename) {
         current = next;
     }
 
-    cout << "=== Prime Implicants ===\n";
+    cout << "Prime Implicants:\n";
     for (size_t i = 0; i < primes.size(); ++i) {
         cout << i << ": " << primes[i].bits << " covers { ";
         for (int v : primes[i].covers) cout << v << " ";
@@ -236,7 +235,7 @@ int qm_minimize(const string &filename) {
     if (minterms.empty()) {
         cout << "No minterms to cover.\n"; return 0;
     }
-//SEIF STOP
+
     int R = (int)primes.size();
     int C = (int)minterms.size();
     vector<vector<int>> table(R, vector<int>(C, 0));
@@ -251,7 +250,7 @@ int qm_minimize(const string &filename) {
             }
             if (ok) table[i][j] = 1;
         }
-
+    //EPI Extraction
     vector<int> essential_indices;
     vector<int> covered(C, 0);
     for (int j = 0; j < C; ++j) {
@@ -266,7 +265,7 @@ int qm_minimize(const string &filename) {
         }
     }
 
-    cout << "\n=== Essential Prime Implicants ===\n";
+    cout << "\nEssential Prime Implicants:\n";
     if (essential_indices.empty()) cout << "None\n";
     for (int idx : essential_indices)
         cout << idx << ": " << primes[idx].bits << " -> " << implicantToExpr(primes[idx], vars, isMaxterm) << "\n";
@@ -281,7 +280,7 @@ int qm_minimize(const string &filename) {
     }
     if (uncovered_minterm_indices.empty()) cout << "(none)";
     cout << "\n";
-
+    //Petrick'Method
     vector<vector<int>> final_solutions;
     if (uncovered_minterm_indices.empty()) {
         final_solutions.push_back(essential_indices);
@@ -344,7 +343,7 @@ int qm_minimize(const string &filename) {
         }
     }
 
-    cout << "\n=== Minimized Expression(s) (" << (isMaxterm ? "POS" : "SOP") << ") ===\n";
+    cout << "\nMinimized Expression(s) (" << (isMaxterm ? "POS" : "SOP") << "):\n";
     for (size_t si = 0; si < final_solutions.size(); ++si) {
         cout << "Solution " << (si+1) << ": ";
         auto &sol = final_solutions[si];
@@ -366,14 +365,13 @@ int qm_minimize(const string &filename) {
     if (final_solutions.size() > 1)
         cout << "\nMultiple minimal solutions found: " << final_solutions.size() << "\n";
 
-    cout << "\n=== Verilog Generation ===\n";
+    cout << "\nVerilog Generation:\n";
     for (size_t si = 0; si < final_solutions.size(); ++si) {
         string modname = "f_solution" + to_string(si+1);
         string fname = modname + ".v";
         ofstream fout(fname);
         if (!fout) { cerr << "Cannot write " << fname << "\n"; continue; }
 
-        fout << "// Auto-generated Verilog\n";
         fout << "module " << modname << "(";
         for (int k = 0; k < vars; ++k) fout << varName(k) << ", ";
         fout << "F);\n";
@@ -418,4 +416,3 @@ int qm_minimize(const string &filename) {
 
     return 0;
 }
-
