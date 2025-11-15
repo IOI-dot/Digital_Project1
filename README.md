@@ -1,9 +1,8 @@
 🧮 Quine-McCluskey Logic Minimizer
-Milestone 3 – Semi-Functional Implementation
-
 👥 By:
 - Omar Abdel Motalb
-- Seif
+- Seif eldin Ramy Mostafa
+- Ali Ahmed Alkholy
 Date: November 2025
 
 ------------------------------------------------------------
@@ -18,12 +17,19 @@ It supports “don’t care” terms (d) and handles Boolean functions up to 20 
 ------------------------------------------------------------
 🖥️ Features Implemented
 ------------------------------------------------------------
-✅ Reads Boolean functions from a text file
-✅ Supports minterms (m) and maxterms (M)
-✅ Supports don’t-care terms (d)
-✅ Generates and displays all Prime Implicants (PIs)
-✅ Identifies and prints Essential Prime Implicants (EPIs)
-✅ Outputs the minimized Boolean expression (SOP or POS)
+ Reads Boolean functions from a text file
+
+ Supports minterms (m) and maxterms (M)
+
+ Supports don’t-care terms (d)
+
+ Generates and displays all Prime Implicants (PIs)
+
+ Identifies and prints Essential Prime Implicants (EPIs)
+
+ Outputs the minimized Boolean expression (SOP or POS)
+
+ Generates Verilog modules for each minimal solution
 
 ------------------------------------------------------------
 📂 Input File Format
@@ -53,18 +59,18 @@ d1,d3
 3. Build the program (it will generate `qm.exe` or similar executable).
 
 Or using terminal:
-g++ main.cpp -o qm.exe
+After downloading the zip file from the git repository, compile the program with g++ main.cpp q_m.cpp -o qm_minimizer on the terminal and prepare a text file specifying the number of variables, minterms/maxterms, and optional don’t-cares in three lines separate or use the built in test cases. Run with ./qm_minimizer (uses default file) or ./qm_minimizer <filename>. The program outputs minimized expressions and generates corresponding Verilog modules.
 
 ------------------------------------------------------------
 🚀 How to Run
 ------------------------------------------------------------
 Option 1: From your IDE
-- Run the program; it will read `Test1.txt` by default.
+- Run the program; it will read `Test6.txt` by default.
 
 Option 2: From the terminal or PowerShell
-- Place your input file (e.g., Test1.txt) in the same directory as qm.exe
+- Place your input file in the same directory as qm.exe
 - Run:
-  .\qm.exe Test1.txt
+  .\qm.exe (YOUR TEST FILE).txt
 
 If no filename is provided, the program defaults to:
   .\qm.exe
@@ -73,23 +79,33 @@ If no filename is provided, the program defaults to:
 ------------------------------------------------------------
 📜 Example Input
 ------------------------------------------------------------
-5
-m0,m1,m2,m3,m8,m9,m10,m11,m24,m25,m26,m27
-d4,d12,d20,d28
+3
+m1,m3,m6,m7
+d0,d5
 
 ------------------------------------------------------------
 📤 Example Output
 ------------------------------------------------------------
 Prime Implicants:
-00- covers { 0 1 }
-11- covers { 6 7 }
---1 covers { 1 3 5 7 }
+0: 00- covers { 0 1 }
+1: 11- covers { 6 7 }
+2: --1 covers { 1 3 5 7 }
+
+Minterms to cover: 1 3 6 7
 
 Essential Prime Implicants:
---1
+2: --1 -> C
+1: 11- -> AB
 
-Minimized Expression (SOP):
-C + AB
+Minterms not covered by essential PIs: (none)
+
+Minimized Expression(s) (SOP):
+Solution 1: C + AB
+
+Verilog Generation:
+Generated f_solution1.v
+
+Process finished with exit code 0
 
 ------------------------------------------------------------
 ℹ️ Notes
@@ -98,3 +114,4 @@ C + AB
 - Don’t-care terms are included during grouping but ignored in the final expression.
 - Make sure the input follows the exact format.
 - Works for Boolean functions with up to 20 variables.
+- Generates ready to be used Verilog files for Hardware Implementation.
